@@ -6,7 +6,7 @@ public class playerController : MonoBehaviour
 
                                 
     [Header ("Bewegungssystem")]                            //Deklarierungen und Variablen fürs nach links und rechts bewegen
-    [SerializeField] private float _speed = 100f;           //Geschwindigkeit
+    [SerializeField] private float _speed;           //Geschwindigkeit
     private float _horizontalInput;                         //deklarierung von inputs
 
 
@@ -22,7 +22,7 @@ public class playerController : MonoBehaviour
     [Header ("Jump System")]                                //Deklarierungen und Variablen fürs springen    
     [SerializeField] float jumpTime;                        //variable, wie schnell der spieler springen kann
     [SerializeField] float jumpMultiplier;                  //variable, wie hoch der spieler springen kann
-    [SerializeField] public float jumpHeight = 6.5f;        //Variable für Höhe des Sprunges
+    [SerializeField] public float jumpHeight;        //Variable für Höhe des Sprunges
     bool isJumping;                                         //ist der Spieler am springen???
     float jumpCounter;                                      //Variable, um den Spieler bis zur einer bestimmten Distanz nach oben befördert
     [SerializeField] float fallMultiplier;                  //Variable, wie schnell der Spieler nach dem Höhepunkt des Sprungs wieder runterfällt
@@ -53,32 +53,39 @@ public class playerController : MonoBehaviour
     void Update()
     {   
 
-        if (Input.GetButtonDown("Jump") && isGrounded()){
-            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, jumpHeight);
+        if (Input.GetButtonDown("Jump") && isGrounded()){                       //bringt unseren charakter in die luft
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, jumpHeight); //die position des rigidbodys wird hier verändert
             isJumping = true;
             jumpCounter = 0;
         }
 
-        if (_rb.linearVelocity.y < 0){
+        if (_rb.linearVelocity.y < 0){                                          //schnelleres runterfallen
             _rb.linearVelocity -= vecGravity * fallMultiplier * Time.deltaTime;
         }
-
-        if (_rb.linearVelocity.y > 0 && isJumping){
+        
+        if (_rb.linearVelocity.y > 0 && isJumping){                             //je länger ich die leertaste halte desto höher springe ich                
             jumpCounter += Time.deltaTime;
+            if (jumpCounter < jumpTime) isJumping = false;
 
             float t = jumpCounter / jumpTime;
             float currentJumpM = jumpMultiplier;
 
-            if (t > 0.5f){
+            if (t > 0.5f){                                                      //verlangsamt den spieler je höher er geht
                 currentJumpM = jumpMultiplier * (1 - t);
             }
 
-            if (jumpCounter > jumpTime) isJumping = false;
-            _rb.linearVelocity += vecGravity * currentJumpM * Time.deltaTime;
+            _rb.linearVelocity += vecGravity * currentJumpM * Time.deltaTime;   //die geschwindigkeit des rigidbodys wird am ende angepasst
+            
         }
-
+        
         if (Input.GetButtonUp("Jump")){
             isJumping = false;
+            jumpCounter = 0;
+
+            if (_rb.linearVelocity.y > 0) {
+                _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y *0.6f);
+            }
+
         }
     }
 
@@ -86,4 +93,8 @@ public class playerController : MonoBehaviour
         return Physics2D.OverlapCapsule(_groundCheck.position, new Vector2(1.8f, 0.3f), CapsuleDirection2D.Horizontal, 0, _groundLayer);
         
     }
+
+    //bool isWeapon(){
+    
+    //}
 }
