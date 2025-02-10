@@ -6,6 +6,7 @@ public class WaffeScript : MonoBehaviour
 {
     public GameObject Waffe; // In unitz das objekt waffe reinziehen
     public Collider2D Trigger;
+    public Collider2D Player;
     public bool PlayerhasWaffe = false;
     public float time;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -30,8 +31,11 @@ public class WaffeScript : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D Player){ //Wenn der collider des spielers mit dem trigger der waffe collidiert, wird der bolean wert geaendert und die Waffe despawnt
+        PlayerhasWaffe = true;
+    }
 
     void Timer(){
             time = time + Time.deltaTime; //Time/deltaTime stellt sicher, dass es unabhaengig von der framerate hochzaelt
     }
-}
+    }
