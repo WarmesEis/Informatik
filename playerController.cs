@@ -30,11 +30,17 @@ public class playerController : MonoBehaviour
     public LayerMask _groundLayer;                          //Layer für den Boden des Spielers
 
 
+    [Header ("Weapon System")]
+    public bool PlayerhasWaffe = false;
+    public Collider2D waffecollider;
+    public GameObject Waffe;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {   
+
         
         vecGravity = new Vector2(0, -Physics.gravity.y);    // Hier wird die Gravitationsvariable initialisiert
         _rb = GetComponent<Rigidbody2D>();                  //greife auf den rigidbody komponenten zu
@@ -94,7 +100,18 @@ public class playerController : MonoBehaviour
         
     }
 
-    //bool isWeapon(){
-    
-    //}
+    /*
+    void OnCollisionEnter2D(Collision2D waffecollider)
+    {
+        
+        if (PlayerhasWaffe == false){
+            PlayerhasWaffe = true;
+            //Destroy(waffe);
+       }
+
+       if (PlayerhasWaffe == true) {
+            
+       }
+    }
+    */
 }
