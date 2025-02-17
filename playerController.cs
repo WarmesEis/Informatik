@@ -1,5 +1,7 @@
+using System.Runtime.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class playerController : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class playerController : MonoBehaviour
     [SerializeField] private float _speed;           //Geschwindigkeit
     private float _horizontalInput;                         //deklarierung von inputs
 
+    private bool isFacingRight = true;
 
 
     private Rigidbody2D _rb;                                //der rigidbody ist der Teil des spielers der bewegt wird
@@ -37,6 +40,9 @@ public class playerController : MonoBehaviour
 
 
 
+    [Header ("Animationé")]
+    private Animator _anim;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {   
@@ -44,6 +50,7 @@ public class playerController : MonoBehaviour
         
         vecGravity = new Vector2(0, -Physics.gravity.y);    // Hier wird die Gravitationsvariable initialisiert
         _rb = GetComponent<Rigidbody2D>();                  //greife auf den rigidbody komponenten zu
+        _anim = GetComponent<Animator>();
     }
 
     private void FixedUpdate(){
@@ -52,13 +59,25 @@ public class playerController : MonoBehaviour
         float horizontalMovement = _horizontalInput * _speed * Time.deltaTime;          //eine neue variable die horizontalmovement heißt wird geschaffen
         _rb.linearVelocity = new Vector2(horizontalMovement, _rb.linearVelocity.y);     // der rigidbody wird dann 2-dimensionalem Vector um die Werte innerhalb der klammern bewegt
 
+
+        //Animation
+        //ist unser kollege am runnen
+        if (_horizontalInput != 0)
+        {
+            _anim.SetBool( "isRunning",  true);
+        }
+        else{
+            _anim.SetBool("isRunning", false);
+        }
+
+        
     }
 
 
     // Update is called once per frame
     void Update()
     {   
-
+        Flip();
         if (Input.GetButtonDown("Jump") && isGrounded()){                       //bringt unseren charakter in die luft
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, jumpHeight); //die position des rigidbodys wird hier verändert
             isJumping = true;
@@ -114,4 +133,17 @@ public class playerController : MonoBehaviour
        }
     }
     */
+
+    private void Flip()
+    {
+        if(isFacingRight && _horizontalInput < 0f || !isFacingRight && _horizontalInput > 0f)
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+
+
 }
