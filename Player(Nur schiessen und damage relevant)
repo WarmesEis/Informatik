@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
+class Player : MonoBehaviour //Klasse player erbt Eigenschaften der Klasse MonoBehaviour
+{
+    public float velocity =10.0f; //erstellt Variable und legt sie fest
+    public Rigidbody2D rb2d; //erstellt Objekt rb2d in der Klasse Rigidbody2D (von Unity)
+        float horizontal; //erstellt Variable
+    float vertical; //erstellt Variable
+
+
+    
+    public GameObject Bullet; //bezug auf das gameobjekt bullet
+    public bulletscript bulletscript; //eig brauch es das nicht mehr aber zur sicherheit wird es drin gelassen
+    public Lebensanzeigescript lebensanzeigescript; //Bezug auf die Lebensanzeige des players
+    public Transform Spawnpunktprojektil; // Spawnpunkt, wo die Bullet spawnt (leicht for dem spieler)
+
+    void Start ()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+    }
+
+    void Update ()
+    {
+        horizontal = Input.GetAxisRaw ("Horizontal"); //gibt Wert zwischen 1 und -1 zurück -> Vorzeichen bestimmt in der nachfolgenden Multiplikation, ob links/ rechts
+        vertical = Input.GetAxisRaw ("Vertical"); //gibt Wert zwischen 1 und -1 zurück -> Vorzeichen bestimmt in der nachfolgenden Multiplikation, ob hoch/ runter
+        rb2d.linearVelocity = new Vector2 (horizontal * velocity, vertical * velocity);
+
+        //Schiessen
+    if (Input.GetKeyDown(KeyCode.E)){ //beim druecken von taste e
+        Instantiate(Bullet, Spawnpunktprojektil.position,transform.rotation); // bullet wird gespawnt
+    }
+    
+    }
+    // Damaage (auch von eigenen Bullets)
+    public void TakeDamage(int damage) { 
+        lebensanzeigescript.leben = lebensanzeigescript.leben -damage; //damage bei der lebensanzeige ein leben weniger
+    }
+
+    }
